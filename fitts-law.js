@@ -429,7 +429,14 @@ var fittsTest = {
 		div.append('button')
 			.attr('id', buttonID)
 			.attr('type', 'button')
-			.text('delete!');
+			.text('delete!')
+			.style('margin-left', '80px');
+
+		var saveButtonID ='saveDataSet' + num;
+		div.append('button')
+			.attr('id', saveButtonID)
+			.attr('type', 'button')
+			.text('save!');
 			
 		var that = this;
 		
@@ -444,12 +451,64 @@ var fittsTest = {
 				that.highlightDataSet(num);				
 			}
 			fittsTest.active = false;
+		})
 
+		$('#' + saveButtonID).click(function() {
+			console.log('saving...')
+			that.saveDataSet(num)
 		})
 			
 		this.highlightDataSet(num);
 		// add colour
 		
+	},
+
+	saveDataSet: function(num) {
+		const data = this.data[num].data
+		let content = ''
+
+		const get = (object, path, defaultValue) => {
+			path = path.split('.')
+
+			if (path.length == 1) {
+				if (object[path[0]] != null) {
+					return object[path[0]]
+				} else {
+					return defaultValue
+				}
+			}
+			return get(object[path.shift()], path.join('.'), defaultValue)
+		}
+
+		if (data.length) {
+			const keys = ['time', 'distance', 'width', 'hit.x', 'hit.y', 'hit.t', 'start.x', 'start.y', 'start.t', 'realDistance', 'projectedHitOffsetX', 'projectedHitOffsetY']
+			content = keys.join(',')
+			content += '\n'
+
+			for (const row of data) {
+				for (const key of keys) {
+					let value = get(row, key)
+
+					if (typeof value == 'object') {
+						content += `"${JSON.stringify(value).replace(/\"/g, '""')}"`
+					} else if (value == null) {
+						// do nothing
+					} else {
+						content += value + ''
+					}
+
+					content += ','
+				}
+
+				content += '\n'
+			}
+		}
+
+		const bb = new Blob([content], { type: 'text/csv' });
+		const a = document.createElement('a');
+		a.download = 'dataset_' + num + '.csv';
+		a.href = window.URL.createObjectURL(bb);
+		a.click();
 	},
 	
 	deleteDataSet: function(num) {
@@ -1193,6 +1252,11 @@ $('#randomizeCheckbox').change(function(event) {
 })
 
 $('#addDataSetButton').click(function() {
+	fittsTest.addDataSet();
+	fittsTest.active = false;
+});
+
+$('#saveDataToCSV').click(function() {
 	fittsTest.addDataSet();
 	fittsTest.active = false;
 });

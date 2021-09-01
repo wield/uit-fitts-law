@@ -15,54 +15,9 @@
 		<link type="text/css" rel="stylesheet" href="style.css"/>
 	</head>
 	<body>
-		<!-- fork me on github -->
-		<a href="https://github.com/SimonWallner/uit-fitts-law"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
-
 
 		<div class="container_12">
 			<h1 class="prefix_1 grid_9">An Interactive Visualisation of <strong>Fitts's Law</strong> with JavaScript and <strong>D3</strong></h1>
-			<div class="prefix_1 grid_7">
-				<p>
-					Fitts's Law is one of the cornerstones of user interface research. In 1954, Fitts described the relationship between the target distance, width, and time needed for a target acquisition task. This later became known as <strong>Fitts's law</strong> [Fitts 1954].
-				</p>
-				<p>
-					This interactive illustration of Fitts's test should serve as an introduction to Fitts' law.  It can also help the reader to visualise details not directly covered by the law and give further insights into motion in 2D target acquisition tasks.
-				</p>
-				<p class="note">
-					We recomend a modern browser and fast computer to run the interactive tests. We developed on Safari and Chrome, so support for other modern browsers is likely but not guaranteed.
-				</p>
-
-				<h2>Fitts's Law</h2>
-				<p>
-					For a given target acquisition task, e.g. move the mouse to a certain point in the UI of an application and select it, Fitts's law desribes how the distance from start point to the target and the width of the target influence the index of difficulty (ID) of the task.
-				</p>
-				<p>
-					The law (in the Shannon formulation [MacKenzie and Buxton 1992]) states that
-				<div class="math">
-					<img src="shannon.png" style="width: 160px" alt="Shannon Formulation of the Fitts's law" />
-				</div>
-					where <strong>A</strong> is the task's amplitude or distance, <strong>W</strong> is the target's width, and the resulting <strong>ID</strong> is the aforementioned <strong>Index of Difficulty</strong>.
-				</p>
-				<p>
-					From this formula we can see that the task gets harder, the farther away the target is and the smaller it is. This fits well with the common perception of such tasks. As it turns out, the time it takes to perform such a task is linearly correlated with its ID.
-				</p>
-
-				<h2>The Test</h2>
-				<p>
-					Below you can find an interactive Fitts's test. The test is laid out according to the recommendations found in [Soukoreff and Mackenzie 2004]. It should also follow the ISO standard [ISO 9241-9] which unfortunately was unavailable to us at the time of writing.
-				</p>
-				<p>
-					The test setup allows for multiple data sets to be created (e.g. to compare different input devices or parameters) and the test parameters (<strong>distance</strong> and <strong>width</strong>) can be adjusted. If parameters are set randomly, they will update after each test round, to allow for the continuous insertion of test data for different conditions.
-				</p>
-				<p>
-					Below you can see the test area. Beneath it you can find various plots that update in real time while data is entered. Data is accumulated in the live plots as long as the test parameters remain unchanged.
-
-				<h2>A word of Warning</h2>
-				<p>
-				This test setup is merely for educative and illustrative purposes. This is <strong>not</strong> a controlled experiment, and no definitive truths should be derived from it. It can, however, help in exploring different settings and be a usefull tool for constructing real Fitts's experiments.
-				</p>
-
-			</div>
 
 			<div class="clear"></div>
 
