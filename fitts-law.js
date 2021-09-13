@@ -481,7 +481,7 @@ var fittsTest = {
 		}
 
 		if (data.length) {
-			const keys = ['time', 'distance', 'width', 'hit.x', 'hit.y', 'hit.t', 'start.x', 'start.y', 'start.t', 'realDistance', 'projectedHitOffsetX', 'projectedHitOffsetY']
+			const keys = ['time', 'distance', 'width', 'hit.x', 'hit.y', 'hit.t', 'start.x', 'start.y', 'start.t', 'target.x', 'target.y', 'target.t', 'realDistance', 'projectedHitOffsetX', 'projectedHitOffsetY']
 			content = keys.join(',')
 			content += '\n'
 
@@ -672,29 +672,38 @@ var fittsTest = {
 			var mIDe = mean(newData, function(d) { return d.IDe; });
 			var a = mT - b * mIDe;
 			
-			if (!isNaN(a))
-			{			
-				var makeLine = function(d) {
+			if (!isNaN(a)) {
+				var makeLine = function (d) {
 					return d
 						.attr('x1', 0)
 						.attr('x2', scatterEffectiveDimension.innerWidth)
-						.attr('y1', function(d) { return effScatterY(d.y1); })
-						.attr('y2', function(d) { return effScatterY(d.y2); })
+						.attr('y1', function (d) { return effScatterY(d.y1); })
+						.attr('y2', function (d) { return effScatterY(d.y2); })
 				}
-			
+
 				var regression = scatterEffectiveGroup.selectAll('line.cat' + key)
-					.data([{y1:a + b * 0.5, y2: a + b * 6.5}]);
-			
+					.data([{ y1: a + b * 0.5, y2: a + b * 6.5 }]);
+
+				var m = (b * -6) / scatterEffectiveDimension.innerWidth
+				var b = (a + b * 0.5)
+				console.log('eq: y = ' + m + 'x + ' + b)
+
 				regression.enter().append('line')
 					.attr('class', 'cat' + key)
 					.style('stroke', colour)
 					.style('stroke-width', 2)
 					.call(makeLine);
-			
+
+				scatterEffectiveGroup.append("text")      // text label for the x axis
+					.attr("x", 265)
+					.attr("y", 240)
+					.style("text-anchor", "middle")
+					.text('eq: y = ' + m + 'x + ' + b);
+
 				regression.transition()
 					.call(makeLine);
 			}
-				
+
 
 			// ============== histogram ====================
 			var histThroughput = d3.layout.histogram()
@@ -810,7 +819,7 @@ var fittsTest = {
 					last.v = speed;
 				}
 			}
-		}		
+		}
 	}
 };
 
