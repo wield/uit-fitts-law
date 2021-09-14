@@ -588,6 +588,7 @@ var fittsTest = {
 
 		// process data
 		var dataSetIndex = -1; // evil hack to make it start at 0 then.
+		console.log('')
 		for (var key in that.data) { // for each data set
 			
 			dataSetIndex++;
@@ -686,7 +687,7 @@ var fittsTest = {
 
 				var m = (b * -6) / scatterEffectiveDimension.innerWidth
 				var b = (a + b * 0.5)
-				console.log('eq: y = ' + m + 'x + ' + b)
+				console.log('%ceq: y = ' + m + 'x + ' + b, `color: ${colour}`)
 
 				regression.enter().append('line')
 					.attr('class', 'cat' + key)
@@ -694,11 +695,11 @@ var fittsTest = {
 					.style('stroke-width', 2)
 					.call(makeLine);
 
-				scatterEffectiveGroup.append("text")      // text label for the x axis
-					.attr("x", 265)
-					.attr("y", 240)
-					.style("text-anchor", "middle")
-					.text('eq: y = ' + m + 'x + ' + b);
+				// scatterEffectiveGroup.append("text")      // text label for the x axis
+				// 	.attr("x", 265)
+				// 	.attr("y", 240)
+				// 	.style("text-anchor", "middle")
+				// 	.text('eq: y = ' + m + 'x + ' + b);
 
 				regression.transition()
 					.call(makeLine);
