@@ -39,11 +39,52 @@ var MAX_TIME = 2000;
 var UPDATE_DELAY = MAX_TIME;
 var MAX_SPEED = 6; // pixel/ms
 
+const get = (object, path, defaultValue) => {
+	path = path.split('.')
+
+	if (path.length == 1) {
+		if (object[path[0]] != null) {
+			return object[path[0]]
+		} else {
+			return defaultValue
+		}
+	}
+	return get(object[path.shift()], path.join('.'), defaultValue)
+}
+
+const toCSV = (data, keys) => {
+	let content = ''
+
+	if (data.length) {
+		if (!keys) keys = Object.keys(data[0])
+		content = keys.join(',')
+		content += '\n'
+
+		for (const row of data) {
+			for (const key of keys) {
+				let value = get(row, key)
+
+				if (typeof value == 'object') {
+					content += `"${JSON.stringify(value).replace(/\"/g, '""')}"`
+				} else if (value == null) {
+					// do nothing
+				} else {
+					content += value + ''
+				}
+
+				content += ','
+			}
+
+			content += '\n'
+		}
+	}
+
+	return content
+}
+
 function rHit(r, rTarget) {
 	return ((plotHitsDimension.innerWidth / 2) / rTarget) * r;
 };
-
-
 
 function v(v) {
 	var colour = 'rgb(' + clampInt(0, 255, (v / MAX_SPEED) * 255) + ', 0, 0)';
@@ -110,7 +151,7 @@ var fittsTest = {
 	currentCount: 0,
 	miss: 0,
 	isoLimits: {minD: 120, maxD: 300, minW:10 , maxW: 100},
-	isoParams: {num: 9, distance: 200, width: 50, randomize: true},
+	isoParams: {num: 9, distance: 200, width: 50, randomize: true, click: true},
 	
 	currentPath: [],
 	active: false,
@@ -465,50 +506,15 @@ var fittsTest = {
 
 	saveDataSet: function(num) {
 		const data = this.data[num].data
-		let content = ''
+		const keys = ['time', 'distance', 'width', 'hit.x', 'hit.y', 'hit.t', 'start.x', 'start.y', 'start.t', 'target.x', 'target.y', 'target.t', 'realDistance', 'projectedHitOffsetX', 'projectedHitOffsetY']
 
-		const get = (object, path, defaultValue) => {
-			path = path.split('.')
+		const content = toCSV(data)
 
-			if (path.length == 1) {
-				if (object[path[0]] != null) {
-					return object[path[0]]
-				} else {
-					return defaultValue
-				}
-			}
-			return get(object[path.shift()], path.join('.'), defaultValue)
-		}
-
-		if (data.length) {
-			const keys = ['time', 'distance', 'width', 'hit.x', 'hit.y', 'hit.t', 'start.x', 'start.y', 'start.t', 'target.x', 'target.y', 'target.t', 'realDistance', 'projectedHitOffsetX', 'projectedHitOffsetY']
-			content = keys.join(',')
-			content += '\n'
-
-			for (const row of data) {
-				for (const key of keys) {
-					let value = get(row, key)
-
-					if (typeof value == 'object') {
-						content += `"${JSON.stringify(value).replace(/\"/g, '""')}"`
-					} else if (value == null) {
-						// do nothing
-					} else {
-						content += value + ''
-					}
-
-					content += ','
-				}
-
-				content += '\n'
-			}
-		}
-
-		const bb = new Blob([content], { type: 'text/csv' });
-		const a = document.createElement('a');
-		a.download = 'dataset_' + num + '.csv';
-		a.href = window.URL.createObjectURL(bb);
-		a.click();
+		const bb = new Blob([content], { type: 'text/csv' })
+		const a = document.createElement('a')
+		a.download = 'dataset_' + num + '.csv'
+		a.href = window.URL.createObjectURL(bb)
+		a.click()
 	},
 	
 	deleteDataSet: function(num) {
@@ -632,7 +638,6 @@ var fittsTest = {
 				}
 			}
 			
-			
 			// insert stuff in SVG
 			var colour = that.data[key].colour;
 			
@@ -685,7 +690,7 @@ var fittsTest = {
 				var regression = scatterEffectiveGroup.selectAll('line.cat' + key)
 					.data([{ y1: a + b * 0.5, y2: a + b * 6.5 }]);
 
-				var m = (b * -6) / scatterEffectiveDimension.innerWidth
+				var m = ((a + b * 6.5) - (a + b * 0.5)) / 6
 				var b = (a + b * 0.5)
 				console.log('%ceq: y = ' + m + 'x + ' + b, `color: ${colour}`)
 
@@ -908,6 +913,10 @@ function mouseMoved()
 {
 	var m = d3.svg.mouse(this);
 	fittsTest.mouseMoved(m[0], m[1])
+
+	if (!fittsTest.isoParams.click) {
+		fittsTest.mouseClicked(m[0], m[1])
+	}
 }
 
 function mouseClicked()
@@ -1259,6 +1268,10 @@ $('#randomizeButton').click(function() {
 
 $('#randomizeCheckbox').change(function(event) {
 	fittsTest.isoParams.randomize = $(this).attr('checked');
+})
+
+$('#clickCheckbox').change(function(event) {
+	fittsTest.isoParams.click = $(this).attr('checked');
 })
 
 $('#addDataSetButton').click(function() {
