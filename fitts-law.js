@@ -33,6 +33,13 @@ var scatterEffectiveDimension = makeDimension(540, 300, 30, 30, 30, 50);
 var positionEffectiveDimension = makeDimension(540, 200, 30, 30, 30, 40);
 var speedEffectiveDimension = positionEffectiveDimension;
 var histDimension = makeDimension(540, 300, 30, 30, 30, 50);
+var mark1Test = [
+	{ distance: 200, width: 50 },
+	{ distance: 300, width: 70 },
+	{ distance: 120, width: 30 },
+	{ distance: 250, width: 20 },
+	{ distance: 150, width: 45 },
+]
 
 var LIVE_STAY = 1000;
 var MAX_TIME = 2000;
@@ -150,6 +157,7 @@ var fittsTest = {
 	currentPosition: 0,
 	currentCount: 0,
 	miss: 0,
+	currentRound: 0,
 	isoLimits: {minD: 120, maxD: 300, minW:10 , maxW: 100},
 	isoParams: {num: 9, distance: 200, width: 50, randomize: true, click: true},
 	
@@ -438,8 +446,15 @@ var fittsTest = {
 	},
 	
 	randomizeParams: function() {
-		this.isoParams.distance = Math.floor(randomAB(this.isoLimits.minD, this.isoLimits.maxD));
-		this.isoParams.width = Math.floor(randomAB(this.isoLimits.minW, this.isoLimits.maxW));
+		if (this.currentRound < mark1Test.length) {
+			console.log('current round', this.currentRound)
+			this.isoParams.distance = mark1Test[this.currentRound].distance
+			this.isoParams.width = mark1Test[this.currentRound].width
+			this.currentRound += 1
+		} else {
+			this.isoParams.distance = Math.floor(randomAB(this.isoLimits.minD, this.isoLimits.maxD));
+			this.isoParams.width = Math.floor(randomAB(this.isoLimits.minW, this.isoLimits.maxW));
+		}
 
 		$('#sliderDistance').slider('value', this.isoParams.distance);
 		$('#sliderWidth').slider('value', this.isoParams.width);
@@ -1261,6 +1276,7 @@ $("#sliderWidth").slider({
 });
 
 $('#randomizeButton').click(function() {
+	fittsTest.currentRound = 0
 	fittsTest.randomizeParams();
 	$('#randomizeCheckbox').attr('checked', true);
 	fittsTest.isoParams.randomize = true;
