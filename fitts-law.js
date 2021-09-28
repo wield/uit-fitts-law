@@ -44,7 +44,7 @@ var mark1Test = [
 ]
 
 var LIVE_STAY = 1000;
-var MAX_TIME = 2000;
+var MAX_TIME = 4000;
 var UPDATE_DELAY = MAX_TIME;
 var MAX_SPEED = 6; // pixel/ms
 
@@ -513,6 +513,8 @@ var fittsTest = {
         last.t = p.t;
         last.v = speed;
       }
+    } else {
+      console.log('OUTLIER!!!')
     }
   },
 
